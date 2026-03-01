@@ -1,0 +1,16 @@
+{
+  "name": "cloudmusic-player",
+  "version": "1.0.0",
+  "description": "CloudMusic Web Player - 私有网易云音乐播放器",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node src/server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "music-metadata": "^7.14.0",
+    "cors": "^2.8.5",
+    "axios": "^1.6.0"
+  }
+}
