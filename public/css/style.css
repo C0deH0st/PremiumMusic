@@ -61,8 +61,8 @@
   opacity: 1;
 }
 
-.app.webgl-bg-ready.bg-effect2 .starry-sky::before,
-.app.webgl-bg-ready.bg-effect2 .starry-sky::after {
+.app.webgl-bg-active.bg-effect2 .starry-sky::before,
+.app.webgl-bg-active.bg-effect2 .starry-sky::after {
   opacity: 0;
 }
 

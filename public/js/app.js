@@ -285,17 +285,23 @@ function createBackgroundShaderController(canvas, appRootEl) {
           animationFrame = 0;
         }
         canvas.classList.remove('active');
+        appRootEl?.classList.remove('webgl-bg-active');
         currentMode = null;
         currentProgram = null;
         return;
       }
 
       const nextProgram = getProgram(mode);
-      if (!nextProgram) return;
+      if (!nextProgram) {
+        canvas.classList.remove('active');
+        appRootEl?.classList.remove('webgl-bg-active');
+        return;
+      }
       currentMode = mode;
       currentProgram = nextProgram;
       resize();
       canvas.classList.add('active');
+      appRootEl?.classList.add('webgl-bg-active');
 
       if (!animationFrame) {
         startTime = performance.now();
@@ -309,6 +315,7 @@ function createBackgroundShaderController(canvas, appRootEl) {
       }
       window.removeEventListener('mousemove', onMouseMove);
       appRootEl?.classList.remove('webgl-bg-ready');
+      appRootEl?.classList.remove('webgl-bg-active');
       programCache.forEach((program) => gl.deleteProgram(program));
       gl.deleteBuffer(positionBuffer);
       gl.deleteBuffer(textureBuffer);
