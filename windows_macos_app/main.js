@@ -41,11 +41,15 @@ function buildCandidates(rawInput) {
 }
 
 function buildAppMenu() {
+  const appVersion = app.getVersion();
   const template = [
     {
       label: 'Premium Music',
       submenu: [
-        { role: 'about' },
+        {
+          label: '关于 Premium Music',
+          click: () => app.showAboutPanel()
+        },
         { type: 'separator' },
         { role: 'hide' },
         { role: 'hideOthers' },
@@ -77,6 +81,13 @@ function buildAppMenu() {
       ]
     }
   ];
+
+  app.setAboutPanelOptions({
+    applicationName: 'Premium Music',
+    applicationVersion: appVersion,
+    version: appVersion,
+    copyright: `Copyright © ${new Date().getFullYear()} Premium Music`
+  });
 
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 }
