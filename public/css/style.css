@@ -1912,11 +1912,6 @@ body::before {
   opacity: 0.65;
 }
 
-.app.webgl-bg-ready.bg-effect2 .lyrics-panel-pc-fullscreen::before,
-.app.webgl-bg-ready.bg-effect2 .lyrics-panel-pc-fullscreen::after {
-  opacity: 0;
-}
-
 .app.bg-effect2 .lyrics-panel-pc-fullscreen::before {
   background:
     radial-gradient(ellipse 86% 62% at 16% 24%, rgba(35, 108, 246, 0.33) 0%, transparent 56%),
