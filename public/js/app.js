@@ -647,12 +647,15 @@ createApp({
 
     const songCount = computed(() => `${songs.value.length} 首`);
     const progressPercent = computed(() => (duration.value ? (currentTime.value / duration.value) * 100 : 0));
-    const pcFullscreenLyricLineCount = computed(() => {
-      if (!isPCFullscreen.value || isMobileViewport.value) return 9;
-      if (viewportHeight.value <= 760) return 5;
-      if (viewportHeight.value <= 900) return 7;
-      return 9;
+    const pcFullscreenLyricAroundCount = computed(() => {
+      if (!isPCFullscreen.value || isMobileViewport.value) return 4;
+      if (viewportHeight.value <= 620) return 0;
+      if (viewportHeight.value <= 700) return 1;
+      if (viewportHeight.value <= 780) return 2;
+      if (viewportHeight.value <= 900) return 3;
+      return 4;
     });
+    const pcFullscreenLyricLineCount = computed(() => pcFullscreenLyricAroundCount.value * 2 + 1);
     const pcFullscreenLyricsStyle = computed(() => ({
       '--pc-lyric-line-count': String(pcFullscreenLyricLineCount.value)
     }));

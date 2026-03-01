@@ -1867,7 +1867,7 @@ body::before {
   left: 0;
   right: 0;
   bottom: 0;
-  background: transparent;
+  background: #070c14;
   z-index: 2000;
   display: flex;
   flex-direction: column;
@@ -1992,14 +1992,13 @@ body::before {
   padding: 0;
   min-height: var(--pc-lyric-line-height);
   line-height: var(--pc-lyric-line-height);
-  font-size: 15px;
+  font-size: 16px;
   transform: none;
   border-radius: 0;
-  animation: pcLyricShift 0.35s ease both;
 }
 
 .lyrics-panel-pc-fullscreen .pc-fullscreen-lyrics-content.mobile-fixed .lyrics-line.active {
-  font-size: 20px;
+  font-size: 16px;
   color: #fff;
   font-weight: 600;
   text-shadow: 0 0 20px rgba(233, 69, 96, 0.5);
@@ -2016,21 +2015,6 @@ body::before {
 @media (max-height: 820px) {
   .lyrics-panel-pc-fullscreen .pc-fullscreen-lyrics-content.mobile-fixed {
     --pc-lyric-line-height: 30px;
-  }
-
-  .lyrics-panel-pc-fullscreen .pc-fullscreen-lyrics-content.mobile-fixed .lyrics-line.active {
-    font-size: 18px;
-  }
-}
-
-@keyframes pcLyricShift {
-  from {
-    opacity: 0.2;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 0.65;
-    transform: translateY(0);
   }
 }
 
