@@ -27,6 +27,13 @@ PremiumMusic is an open-source private music player project with:
 - Lightweight Web UI
 - Electron desktop client (macOS source is open)
 
+## Screenshots
+
+![Home](./docs/screenshots/01-home.png)
+![Playlist](./docs/screenshots/02-playlist.png)
+![Lyrics](./docs/screenshots/03-lyrics.png)
+![Fullscreen](./docs/screenshots/04-fullscreen.png)
+
 ## Project Structure
 
 ```text

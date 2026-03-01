@@ -27,6 +27,13 @@ PremiumMusic 是一个开源的私有音乐播放器项目，包含：
 - 轻量 Web UI
 - Electron 桌面客户端（macOS 源码已开源）
 
+## 界面截图
+
+![首页](./docs/screenshots/01-home.png)
+![播放列表](./docs/screenshots/02-playlist.png)
+![歌词页面](./docs/screenshots/03-lyrics.png)
+![全屏模式](./docs/screenshots/04-fullscreen.png)
+
 ## 目录结构
 
 ```text
