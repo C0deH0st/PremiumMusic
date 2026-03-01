@@ -1,6 +1,6 @@
 {
-  "name": "cloudmusic-macos-app",
-  "version": "1.0.5",
+  "name": "premiummusic-desktop",
+  "version": "1.0.6",
   "description": "Premium Music macOS client",
   "main": "main.js",
   "private": true,
@@ -16,8 +16,9 @@
     "png-to-ico": "^3.0.1"
   },
   "build": {
-    "appId": "com.cloudmusic.desktop",
+    "appId": "com.premiummusic.desktop",
     "productName": "Premium Music",
+    "afterPack": "./scripts/afterPack.js",
     "directories": {
       "output": "dist"
     },

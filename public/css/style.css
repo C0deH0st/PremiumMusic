@@ -1867,7 +1867,7 @@ body::before {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(10, 10, 18, 0.98);
+  background: transparent;
   z-index: 2000;
   display: flex;
   flex-direction: column;
@@ -1883,6 +1883,58 @@ body::before {
 .lyrics-panel-pc-fullscreen.active {
   opacity: 1;
   visibility: visible;
+}
+
+.lyrics-panel-pc-fullscreen::before,
+.lyrics-panel-pc-fullscreen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.lyrics-panel-pc-fullscreen::before {
+  z-index: -2;
+  background:
+    radial-gradient(ellipse 92% 58% at 14% 20%, rgba(53, 108, 196, 0.2) 0%, transparent 58%),
+    radial-gradient(ellipse 66% 44% at 82% 62%, rgba(18, 156, 209, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse 110% 64% at 50% 100%, rgba(26, 76, 156, 0.18) 0%, transparent 60%);
+  animation: nebulaShift 24s ease-in-out infinite alternate;
+}
+
+.lyrics-panel-pc-fullscreen::after {
+  z-index: -1;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.06) 0%, transparent 42%),
+    radial-gradient(circle at 50% 120%, rgba(0, 0, 0, 0.34) 0%, rgba(0, 0, 0, 0.7) 58%),
+    radial-gradient(circle at 50% -20%, rgba(11, 26, 46, 0.6) 0%, transparent 62%);
+  mix-blend-mode: screen;
+  opacity: 0.65;
+}
+
+.app.webgl-bg-ready.bg-effect2 .lyrics-panel-pc-fullscreen::before,
+.app.webgl-bg-ready.bg-effect2 .lyrics-panel-pc-fullscreen::after {
+  opacity: 0;
+}
+
+.app.bg-effect2 .lyrics-panel-pc-fullscreen::before {
+  background:
+    radial-gradient(ellipse 86% 62% at 16% 24%, rgba(35, 108, 246, 0.33) 0%, transparent 56%),
+    radial-gradient(ellipse 70% 46% at 86% 18%, rgba(64, 229, 255, 0.24) 0%, transparent 58%),
+    radial-gradient(ellipse 76% 58% at 62% 78%, rgba(118, 56, 255, 0.26) 0%, transparent 62%),
+    conic-gradient(from 15deg at 35% 45%, rgba(0, 0, 0, 0.15), rgba(84, 210, 255, 0.22), rgba(76, 91, 255, 0.2), rgba(0, 0, 0, 0.18));
+  filter: saturate(1.2) blur(0.2px);
+  animation: shaderFlowTwo 18s ease-in-out infinite alternate;
+}
+
+.app.bg-effect2 .lyrics-panel-pc-fullscreen::after {
+  background:
+    radial-gradient(circle at 70% 20%, rgba(255, 255, 255, 0.18) 0%, transparent 26%),
+    radial-gradient(circle at 18% 70%, rgba(173, 232, 255, 0.16) 0%, transparent 24%),
+    repeating-linear-gradient(125deg, rgba(255, 255, 255, 0.03) 0 1px, transparent 1px 13px);
+  mix-blend-mode: screen;
+  opacity: 0.62;
+  animation: shaderGrainMove 10s linear infinite;
 }
 
 .lyrics-panel-pc-fullscreen .pc-fullscreen-vinyl {
@@ -2003,8 +2055,38 @@ body::before {
   z-index: 100;
 }
 
+.pc-fullscreen-bg-switch {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 100;
+  background: rgba(17, 23, 38, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #eaf4ff;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+}
+
+.pc-fullscreen-bg-switch:hover {
+  border-color: rgba(146, 217, 255, 0.6);
+  box-shadow: 0 0 0 3px rgba(109, 190, 255, 0.14);
+  transform: translateY(-1px);
+}
+
 .lyrics-panel-pc-fullscreen:hover .pc-fullscreen-close,
 .lyrics-panel-pc-fullscreen.show-close .pc-fullscreen-close {
+  opacity: 1;
+  visibility: visible;
+}
+
+.lyrics-panel-pc-fullscreen:hover .pc-fullscreen-bg-switch,
+.lyrics-panel-pc-fullscreen.show-close .pc-fullscreen-bg-switch {
   opacity: 1;
   visibility: visible;
 }

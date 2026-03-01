@@ -1,5 +1,6 @@
 const path = require('path');
 const { app, BrowserWindow, ipcMain, Menu } = require('electron');
+const APP_NAME = 'Premium Music';
 
 function buildCandidates(rawInput) {
   const raw = String(rawInput || '').trim();
@@ -44,10 +45,10 @@ function buildAppMenu() {
   const appVersion = app.getVersion();
   const template = [
     {
-      label: 'Premium Music',
+      label: APP_NAME,
       submenu: [
         {
-          label: '关于 Premium Music',
+          label: `关于 ${APP_NAME}`,
           click: () => app.showAboutPanel()
         },
         { type: 'separator' },
@@ -83,24 +84,35 @@ function buildAppMenu() {
   ];
 
   app.setAboutPanelOptions({
-    applicationName: 'Premium Music',
+    applicationName: APP_NAME,
     applicationVersion: appVersion,
     version: appVersion,
-    copyright: `Copyright © ${new Date().getFullYear()} Premium Music`
+    copyright: `Copyright © ${new Date().getFullYear()} ${APP_NAME}`
   });
 
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 }
 
 function createMainWindow() {
+  const isWindows = process.platform === 'win32';
   const win = new BrowserWindow({
     width: 1320,
     height: 860,
     minWidth: 980,
     minHeight: 680,
-    title: 'Premium Music',
+    title: APP_NAME,
     backgroundColor: '#0a0f17',
     icon: path.join(__dirname, 'assets', 'logo.png'),
+    ...(isWindows
+      ? {
+          titleBarStyle: 'hidden',
+          titleBarOverlay: {
+            color: '#0a0f17',
+            symbolColor: '#ecf2ff',
+            height: 36
+          }
+        }
+      : {}),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -117,6 +129,7 @@ ipcMain.handle('cloudmusic:build-candidates', (_event, rawInput) => {
 });
 
 app.whenReady().then(() => {
+  app.setName(APP_NAME);
   buildAppMenu();
   createMainWindow();
 

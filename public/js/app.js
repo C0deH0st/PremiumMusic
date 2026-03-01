@@ -529,6 +529,7 @@ createApp({
     const currentLyricIndex = ref(-1);
     const currentTime = ref(0);
     const duration = ref(0);
+    const viewportHeight = ref(window.innerHeight);
     const isMobileViewport = ref(window.innerWidth <= MOBILE_BREAKPOINT);
     const isMobileTitleOverflow = ref(false);
     const isFullscreen = ref(false);
@@ -646,6 +647,15 @@ createApp({
 
     const songCount = computed(() => `${songs.value.length} 首`);
     const progressPercent = computed(() => (duration.value ? (currentTime.value / duration.value) * 100 : 0));
+    const pcFullscreenLyricLineCount = computed(() => {
+      if (!isPCFullscreen.value || isMobileViewport.value) return 9;
+      if (viewportHeight.value <= 760) return 5;
+      if (viewportHeight.value <= 900) return 7;
+      return 9;
+    });
+    const pcFullscreenLyricsStyle = computed(() => ({
+      '--pc-lyric-line-count': String(pcFullscreenLyricLineCount.value)
+    }));
 
     function getLyricIndexByTime(timeInSeconds) {
       if (!lyrics.value.length) return -1;
@@ -693,10 +703,12 @@ createApp({
       if (!lyrics.value.length) return [];
       const effectiveIndex = getEffectiveLyricIndex();
 
-      // 移动端和PC全屏歌词都显示9行，围绕当前行居中
+      // PC全屏会根据窗口高度动态显示5/7/9行，保证当前行始终居中显示
+      const lineCount = pcFullscreenLyricLineCount.value;
+      const halfWindow = Math.floor(lineCount / 2);
       const result = [];
       const centerIndex = effectiveIndex >= 0 ? effectiveIndex : 0;
-      for (let offset = -4; offset <= 4; offset++) {
+      for (let offset = -halfWindow; offset <= halfWindow; offset++) {
         const idx = centerIndex + offset;
         if (idx >= 0 && idx < lyrics.value.length) {
           result.push({
@@ -1087,6 +1099,7 @@ createApp({
     }
 
     function handleResize() {
+      viewportHeight.value = window.innerHeight;
       isMobileViewport.value = window.innerWidth <= MOBILE_BREAKPOINT;
 
       if (!isMobileViewport.value) {
@@ -1342,6 +1355,7 @@ createApp({
       songCount,
       displayLyrics,
       fullscreenDisplayLyrics,
+      pcFullscreenLyricsStyle,
       progressPercent,
       isMobileViewport,
       isMobileTitleOverflow,
