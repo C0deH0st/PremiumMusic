@@ -1867,7 +1867,7 @@ body::before {
   left: 0;
   right: 0;
   bottom: 0;
-  background: transparent;
+  background: #070c14;
   z-index: 2000;
   display: flex;
   flex-direction: column;
@@ -1896,7 +1896,6 @@ body::before {
 
 .lyrics-panel-pc-fullscreen::before {
   z-index: 0;
-  background-color: #070c14;
   background:
     radial-gradient(ellipse 92% 58% at 14% 20%, rgba(53, 108, 196, 0.2) 0%, transparent 58%),
     radial-gradient(ellipse 66% 44% at 82% 62%, rgba(18, 156, 209, 0.18) 0%, transparent 55%),
