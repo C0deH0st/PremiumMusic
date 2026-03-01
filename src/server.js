@@ -11,6 +11,7 @@ axios.defaults.headers.common['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win
 const app = express();
 const PORT = process.env.PORT || 3001;
 const MUSIC_DIR = process.env.MUSIC_DIR || '/music';
+const RESOLVED_MUSIC_DIR = path.resolve(MUSIC_DIR);
 const CACHE_DIR = process.env.CACHE_DIR || path.join(__dirname, '../cache');
 const LYRICS_CACHE_DIR = path.join(CACHE_DIR, 'lyrics');
 const COVER_CACHE_DIR = path.join(CACHE_DIR, 'covers');
@@ -38,6 +39,27 @@ function decodeSongId(id) {
   } catch (err) {
     return '';
   }
+}
+
+function encodeSongId(raw) {
+  return Buffer.from(raw, 'utf8').toString('base64').replace(/\//g, '_').replace(/\+/g, '-');
+}
+
+function isPathInsideMusicDir(targetPath) {
+  const resolved = path.resolve(targetPath);
+  const relative = path.relative(RESOLVED_MUSIC_DIR, resolved);
+  return relative === '' || (!relative.startsWith('..') && !path.isAbsolute(relative));
+}
+
+function resolveSongPathFromId(id) {
+  const decoded = decodeSongId(id);
+  if (!decoded || path.isAbsolute(decoded)) return '';
+  const resolved = path.resolve(RESOLVED_MUSIC_DIR, decoded);
+  return isPathInsideMusicDir(resolved) ? resolved : '';
+}
+
+function isAllowedAudioFile(filePath) {
+  return AUDIO_EXTENSIONS.has(path.extname(filePath).toLowerCase());
 }
 
 function findLocalCoverPath(filePath) {
@@ -84,12 +106,11 @@ async function scanMusicDirectory(dir) {
             const metadata = await mm.parseFile(fullPath);
             const common = metadata.common;
             
+            const relativePath = path.relative(RESOLVED_MUSIC_DIR, fullPath);
+            const songId = encodeSongId(relativePath);
             const localCoverPath = findLocalCoverPath(fullPath);
-            const localCover = localCoverPath
-              ? `${BASE_PATH}/api/local-cover?file=${encodeURIComponent(fullPath)}`
-              : null;
+            const localCover = localCoverPath ? `${BASE_PATH}/api/local-cover/${songId}` : null;
             const hasEmbeddedCover = Array.isArray(common.picture) && common.picture.length > 0;
-            const songId = Buffer.from(fullPath).toString('base64').replace(/\//g, '_').replace(/\+/g, '-');
             const songTitle = common.title || path.parse(file).name;
             const songArtist = common.artist || '未知艺术家';
             const coverUrl = `${BASE_PATH}/api/cover/${songId}`;
@@ -97,8 +118,7 @@ async function scanMusicDirectory(dir) {
             songs.push({
               id: songId,
               filename: file,
-              filepath: fullPath,
-              relativePath: path.relative(MUSIC_DIR, fullPath),
+              relativePath,
               folder: path.basename(path.dirname(fullPath)),
               title: common.title || path.parse(file).name,
               artist: common.artist || '未知艺术家',
@@ -271,9 +291,11 @@ function getCoverCache(title, artist) {
 }
 
 // 本地封面图片服务
-router.get('/api/local-cover', async (req, res) => {
-  const filePath = req.query.file;
-  if (!filePath) return res.status(400).send('Missing file parameter');
+router.get('/api/local-cover/:id', async (req, res) => {
+  const filePath = resolveSongPathFromId(req.params.id);
+  if (!filePath || !fs.existsSync(filePath) || !isAllowedAudioFile(filePath)) {
+    return res.status(404).send('File not found');
+  }
 
   const coverPath = findLocalCoverPath(filePath);
   if (coverPath) {
@@ -288,8 +310,8 @@ router.get('/api/local-cover', async (req, res) => {
 
 // 封面服务：内嵌封面 -> 联网缓存 -> 联网API
 router.get('/api/cover/:id', async (req, res) => {
-  const filepath = decodeSongId(req.params.id);
-  if (!filepath || !fs.existsSync(filepath)) {
+  const filepath = resolveSongPathFromId(req.params.id);
+  if (!filepath || !fs.existsSync(filepath) || !isAllowedAudioFile(filepath)) {
     return res.status(404).send('File not found');
   }
 
@@ -515,9 +537,9 @@ router.post('/api/refresh', async (req, res) => {
 
 // 获取歌词 - 优先内嵌歌词
 router.get('/api/lyrics/:id', async (req, res) => {
-  const filepath = decodeSongId(req.params.id);
+  const filepath = resolveSongPathFromId(req.params.id);
   
-  if (!filepath || !fs.existsSync(filepath)) {
+  if (!filepath || !fs.existsSync(filepath) || !isAllowedAudioFile(filepath)) {
     return res.status(404).json({ error: 'File not found' });
   }
   
@@ -693,9 +715,9 @@ async function fetchLyricsFromAPI(songName, artist) {
 
 // 播放音乐流
 router.get('/api/play/:id', (req, res) => {
-  const filepath = decodeSongId(req.params.id);
+  const filepath = resolveSongPathFromId(req.params.id);
   
-  if (!filepath || !fs.existsSync(filepath)) {
+  if (!filepath || !fs.existsSync(filepath) || !isAllowedAudioFile(filepath)) {
     return res.status(404).send('File not found');
   }
 
