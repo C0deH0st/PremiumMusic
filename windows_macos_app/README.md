@@ -13,7 +13,7 @@
 ## 开发运行
 
 ```bash
-cd macos-app
+cd windows_macos_app
 npm install
 npm run dev
 ```
@@ -21,9 +21,21 @@ npm run dev
 ## 打包 macOS App
 
 ```bash
-cd macos-app
+cd windows_macos_app
 npm install
 npm run build:mac
 ```
 
-产物默认在 `macos-app/dist/` 下（`.dmg` 和 `.zip`）。
+产物默认在 `windows_macos_app/dist/` 下（`.dmg`）。
+
+## 常见问题：提示“已损坏，无法打开”
+
+这是 macOS 对未签名/未公证应用的 Gatekeeper 限制，不是程序文件本身损坏。
+
+本机测试可执行：
+
+```bash
+xattr -dr com.apple.quarantine "/Applications/Premium Music.app"
+```
+
+若要彻底避免该提示，需要使用 Apple Developer 证书进行签名并公证（notarization）。

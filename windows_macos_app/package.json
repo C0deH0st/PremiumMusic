@@ -32,7 +32,8 @@
         "dmg"
       ],
       "icon": "assets/logo.png",
-      "category": "public.app-category.music"
+      "category": "public.app-category.music",
+      "artifactName": "Premium Music.${ext}"
     },
     "win": {
       "target": [
@@ -42,7 +43,8 @@
       "artifactName": "Premium Music.${ext}"
     },
     "dmg": {
-      "icon": "assets/logo.png"
+      "icon": "assets/logo.png",
+      "title": "Premium Music"
     }
   }
 }

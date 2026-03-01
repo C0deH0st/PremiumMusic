@@ -19,15 +19,15 @@ jobs:
           - os: macos-latest
             build_script: build:mac
             artifact_name: macos-dist
-            artifact_glob: app/macos/dist/*.dmg
+            artifact_glob: windows_macos_app/dist/*.dmg
           - os: windows-latest
             build_script: build:win
             artifact_name: windows-dist
-            artifact_glob: app/macos/dist/*.exe
+            artifact_glob: windows_macos_app/dist/*.exe
 
     defaults:
       run:
-        working-directory: app/macos
+        working-directory: windows_macos_app
 
     steps:
       - name: Checkout
@@ -38,7 +38,7 @@ jobs:
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: app/macos/package-lock.json
+          cache-dependency-path: windows_macos_app/package-lock.json
 
       - name: Install dependencies
         run: npm ci

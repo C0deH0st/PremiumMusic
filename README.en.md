@@ -18,7 +18,7 @@
 PremiumMusic is an open-source private music player project with:
 
 - Web backend + frontend (`src/` + `public/`)
-- Desktop client source (`app/macos/`, source only; no `node_modules` or `dist`)
+- Desktop client source (`windows_macos_app/`, source only; no `node_modules` or `dist`)
 
 ## Features
 
@@ -26,6 +26,7 @@ PremiumMusic is an open-source private music player project with:
 - Audio metadata parsing via `music-metadata`
 - Lightweight Web UI
 - Electron desktop client (macOS source is open)
+- macOS and Windows packaging via Electron Builder
 
 ## Screenshots
 
@@ -38,8 +39,7 @@ PremiumMusic is an open-source private music player project with:
 
 ```text
 .
-├── app/
-│   └── macos/            # Electron desktop source
+├── windows_macos_app/    # Electron desktop source
 ├── public/               # Web frontend static assets
 ├── src/                  # Web backend service
 ├── Dockerfile
@@ -63,10 +63,22 @@ npm run dev
 ## Run Locally (Desktop / macOS source)
 
 ```bash
-cd app/macos
+cd windows_macos_app
 npm install
 npm run dev
 ```
+
+## macOS “Damaged and can’t be opened” message
+
+This is usually Gatekeeper blocking an unsigned/unnotarized app, not a corrupted file.
+
+For local testing:
+
+```bash
+xattr -dr com.apple.quarantine "/Applications/Premium Music.app"
+```
+
+To permanently avoid this warning, sign and notarize the app with an Apple Developer certificate.
 
 ## Auto Build & Release (GitHub Actions)
 

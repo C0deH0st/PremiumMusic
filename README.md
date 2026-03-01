@@ -18,7 +18,7 @@
 PremiumMusic 是一个开源的私有音乐播放器项目，包含：
 
 - Web 服务端与前端（`src/` + `public/`）
-- Desktop 客户端源码（`app/macos/`，仅源码，不包含 `node_modules` / `dist`）
+- Desktop 客户端源码（`windows_macos_app/`，仅源码，不包含 `node_modules` / `dist`）
 
 ## 功能
 
@@ -26,6 +26,7 @@ PremiumMusic 是一个开源的私有音乐播放器项目，包含：
 - 音频元数据读取（`music-metadata`）
 - 轻量 Web UI
 - Electron 桌面客户端（macOS 源码已开源）
+- macOS 打包与 Windows 打包（Electron Builder）
 
 ## 界面截图
 
@@ -38,8 +39,7 @@ PremiumMusic 是一个开源的私有音乐播放器项目，包含：
 
 ```text
 .
-├── app/
-│   └── macos/            # Electron 客户端源码
+├── windows_macos_app/    # Electron 客户端源码
 ├── public/               # Web 前端静态资源
 ├── src/                  # Web 后端服务
 ├── Dockerfile
@@ -63,10 +63,22 @@ npm run dev
 ## 本地运行（Desktop / macOS 源码）
 
 ```bash
-cd app/macos
+cd windows_macos_app
 npm install
 npm run dev
 ```
+
+## macOS “已损坏，无法打开”说明
+
+这是 macOS Gatekeeper 对未签名/未公证应用的拦截，不是文件真的损坏。
+
+本机测试可执行：
+
+```bash
+xattr -dr com.apple.quarantine "/Applications/Premium Music.app"
+```
+
+若要彻底避免该提示，需要使用 Apple Developer 证书进行签名并公证（notarization）。
 
 ## 自动编译与发版（GitHub Actions）
 
