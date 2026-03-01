@@ -1,0 +1,21 @@
+services:
+  premiummusic:
+    build:
+      context: .
+    container_name: premiummusic
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./music:/music:ro
+      - ./src:/app/src:ro
+      - ./public:/app/public:ro
+    environment:
+      - PORT=3001
+      - MUSIC_DIR=/music
+      - BASE_PATH=/music
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3001/music/api/songs"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
