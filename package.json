@@ -1,7 +1,7 @@
 {
-  "name": "cloudmusic-player",
+  "name": "premiummusic-private-netease-player",
   "version": "1.0.0",
-  "description": "CloudMusic Web Player - 私有网易云音乐播放器",
+  "description": "PremiumMusic - 私有网易云音乐播放器",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
