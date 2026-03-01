@@ -1,0 +1,48 @@
+{
+  "name": "cloudmusic-macos-app",
+  "version": "1.0.0",
+  "description": "Premium Music macOS client",
+  "main": "main.js",
+  "private": true,
+  "scripts": {
+    "dev": "electron .",
+    "start": "electron .",
+    "build:mac": "electron-builder --mac dmg",
+    "build:win": "electron-builder --win portable --x64"
+  },
+  "devDependencies": {
+    "electron": "^31.7.7",
+    "electron-builder": "^24.13.3",
+    "png-to-ico": "^3.0.1"
+  },
+  "build": {
+    "appId": "com.cloudmusic.desktop",
+    "productName": "Premium Music",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer/**/*",
+      "assets/**/*"
+    ],
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "icon": "assets/logo.png",
+      "category": "public.app-category.music"
+    },
+    "win": {
+      "target": [
+        "portable"
+      ],
+      "icon": "assets/logo.ico",
+      "artifactName": "Premium Music.${ext}"
+    },
+    "dmg": {
+      "icon": "assets/logo.png"
+    }
+  }
+}

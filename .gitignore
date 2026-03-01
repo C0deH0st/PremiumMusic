@@ -4,6 +4,7 @@ Thumbs.db
 
 # Dependencies
 node_modules/
+**/node_modules/
 
 # Runtime
 *.log
@@ -16,3 +17,5 @@ music/
 # Build / temp
 dist/
 build/
+**/dist/
+**/build/

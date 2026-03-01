@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Premium Music</title>
+  <link rel="icon" type="image/png" href="../assets/logo.png">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <webview id="musicView" class="music-view" allowpopups="false"></webview>
+
+    <section id="connectScreen" class="connect-screen">
+      <div class="connect-card">
+        <h1>
+          <img src="../assets/logo.png" alt="Premium Music Logo" class="connect-logo">
+          <span>Premium Music</span>
+        </h1>
+        <p>输入服务器地址，例如：<code>xxx.com</code> 或 <code>xxx.com/music</code></p>
+
+        <div class="connect-form">
+          <input id="hostInput" type="text" placeholder="xxx.com" autocomplete="off">
+          <button id="connectBtn" type="button">连接</button>
+        </div>
+
+        <div id="statusText" class="status">未连接</div>
+      </div>
+    </section>
+  </div>
+
+  <script src="./renderer.js"></script>
+</body>
+</html>
