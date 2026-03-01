@@ -19,9 +19,11 @@ jobs:
           - os: macos-latest
             build_script: build:mac
             artifact_name: macos-dist
+            artifact_glob: app/macos/dist/*.dmg
           - os: windows-latest
             build_script: build:win
             artifact_name: windows-dist
+            artifact_glob: app/macos/dist/*.exe
 
     defaults:
       run:
@@ -48,7 +50,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact_name }}
-          path: app/macos/dist/*
+          path: ${{ matrix.artifact_glob }}
           if-no-files-found: error
 
   publish-release:
@@ -66,5 +68,8 @@ jobs:
       - name: Publish release assets
         uses: softprops/action-gh-release@v2
         with:
-          files: release-artifacts/**/*
+          files: |
+            release-artifacts/*.dmg
+            release-artifacts/*.exe
           generate_release_notes: true
+          overwrite_files: true
