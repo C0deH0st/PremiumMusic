@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Premium Music</title>
-  <link rel="icon" type="image/png" href="./images/logo.png?v=20260301-1">
-  <link rel="stylesheet" href="./css/style.css?v=20260301-4">
+  <link rel="icon" type="image/png" href="./images/logo-small.png?v=20260301-5">
+  <link rel="stylesheet" href="./css/style.css?v=20260301-5">
   <script src="./js/vue.global.js?v=3.5.29"></script>
 </head>
 <body>
@@ -21,7 +21,7 @@
     <header class="header">
       <div class="header-left">
         <div class="logo">
-          <img src="./images/logo.png?v=20260301-1" alt="Premium Music Logo" class="logo-image">
+          <img src="./images/logo-small.png?v=20260301-5" alt="Premium Music Logo" class="logo-image">
           <span class="logo-text">Premium Music</span>
         </div>
         <div class="header-current" v-bind:class="{ 'has-content': currentSong }">
@@ -44,8 +44,18 @@
           <path d="m21 21-3.5-3.5"></path>
         </svg>
       </button>
-      <button class="background-switch-btn" @click="cycleBackground" :title="`切换背景（当前：${currentBackgroundLabel}）`">
-        {{ currentBackgroundLabel }}
+      <button
+        class="background-switch-btn"
+        @click="cycleBackground"
+        :title="`切换背景（当前：${currentBackgroundLabel}）`"
+        :aria-label="`切换背景（当前：${currentBackgroundLabel}）`"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="13.5" cy="6.5" r="2.5"></circle>
+          <circle cx="7.5" cy="12" r="2.5"></circle>
+          <circle cx="16.5" cy="16.5" r="2.5"></circle>
+          <path d="M10 8.5l-1 1.3M9.8 13.8l3.4 1.2"></path>
+        </svg>
       </button>
     </header>
 
@@ -245,6 +255,6 @@
     </div>
   </div>
 
-  <script src="./js/app.js?v=20260301-4"></script>
+  <script src="./js/app.js?v=20260301-5"></script>
 </body>
 </html>

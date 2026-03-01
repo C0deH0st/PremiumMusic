@@ -521,7 +521,6 @@ createApp({
       const currentIndex = BACKGROUND_MODES.indexOf(currentBackground.value);
       const nextIndex = (currentIndex + 1) % BACKGROUND_MODES.length;
       currentBackground.value = BACKGROUND_MODES[nextIndex];
-      ensureStarrySky();
     }
 
     function updateFullscreenTitleOverflow() {
@@ -989,7 +988,9 @@ createApp({
 
     watch(currentBackground, (mode) => {
       localStorage.setItem(BACKGROUND_MODE_KEY, mode);
-      ensureStarrySky();
+      nextTick(() => {
+        ensureStarrySky();
+      });
     });
 
     onMounted(async () => {

@@ -131,6 +131,11 @@
   display: none;
 }
 
+.app.bg-starry .star,
+.app.bg-starry .shooting-star {
+  display: block;
+}
+
 .star {
   position: absolute;
   border-radius: 50%;
@@ -405,21 +410,19 @@ body::before {
 
 .background-switch-btn {
   margin-left: 10px;
+  width: 36px;
   height: 36px;
-  padding: 0 12px;
-  max-width: 120px;
-  border-radius: 999px;
+  padding: 0;
+  border-radius: 50%;
   border: 1px solid rgba(255, 255, 255, 0.16);
   background: rgba(17, 23, 38, 0.65);
   color: #eaf4ff;
-  font-size: 12px;
-  letter-spacing: 0.2px;
   cursor: pointer;
   transition: all 0.25s ease;
   flex-shrink: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .background-switch-btn:hover {
@@ -1629,10 +1632,8 @@ body::before {
 
   .background-switch-btn {
     margin-left: 6px;
-    max-width: 74px;
     height: 34px;
-    padding: 0 10px;
-    font-size: 11px;
+    width: 34px;
   }
   
   .player-bar {
