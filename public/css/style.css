@@ -1867,7 +1867,7 @@ body::before {
   left: 0;
   right: 0;
   bottom: 0;
-  background: #070c14;
+  background: transparent;
   z-index: 2000;
   display: flex;
   flex-direction: column;
@@ -1878,6 +1878,7 @@ body::before {
   visibility: hidden;
   transition: all 0.4s ease;
   overflow: hidden;
+  isolation: isolate;
 }
 
 .lyrics-panel-pc-fullscreen.active {
@@ -1894,7 +1895,8 @@ body::before {
 }
 
 .lyrics-panel-pc-fullscreen::before {
-  z-index: -2;
+  z-index: 0;
+  background-color: #070c14;
   background:
     radial-gradient(ellipse 92% 58% at 14% 20%, rgba(53, 108, 196, 0.2) 0%, transparent 58%),
     radial-gradient(ellipse 66% 44% at 82% 62%, rgba(18, 156, 209, 0.18) 0%, transparent 55%),
@@ -1903,7 +1905,7 @@ body::before {
 }
 
 .lyrics-panel-pc-fullscreen::after {
-  z-index: -1;
+  z-index: 1;
   background:
     radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.06) 0%, transparent 42%),
     radial-gradient(circle at 50% 120%, rgba(0, 0, 0, 0.34) 0%, rgba(0, 0, 0, 0.7) 58%),
@@ -1933,6 +1935,8 @@ body::before {
 }
 
 .lyrics-panel-pc-fullscreen .pc-fullscreen-vinyl {
+  position: relative;
+  z-index: 2;
   flex: 0 0 auto;
   display: flex;
   justify-content: center;
@@ -1954,6 +1958,8 @@ body::before {
 }
 
 .lyrics-panel-pc-fullscreen .pc-fullscreen-lyrics-content {
+  position: relative;
+  z-index: 2;
   flex: 1;
   width: 100%;
   max-width: 600px;
@@ -2031,14 +2037,14 @@ body::before {
   transition: all 0.3s ease;
   opacity: 0;
   visibility: hidden;
-  z-index: 100;
+  z-index: 3;
 }
 
 .pc-fullscreen-bg-switch {
   position: absolute;
   top: 20px;
   left: 20px;
-  z-index: 100;
+  z-index: 3;
   background: rgba(17, 23, 38, 0.65);
   border: 1px solid rgba(255, 255, 255, 0.16);
   color: #eaf4ff;
