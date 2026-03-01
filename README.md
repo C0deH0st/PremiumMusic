@@ -1,54 +1,75 @@
-# PremiumMusic - 私有网易云音乐播放器
+<p align="center">
+  <img src="./public/images/logo.png" alt="PremiumMusic Logo" width="140" />
+</p>
 
-一个基于 Node.js + Express 的私有音乐播放器服务，用于在本地或私有环境中提供类网易云音乐风格的播放体验。
+<h1 align="center">PremiumMusic</h1>
 
-## 功能特性
+<p align="center">私有网易云音乐播放器</p>
 
-- 本地音乐资源管理与播放
-- Web 前端界面
-- 后端 API 服务（Express）
-- 支持解析音频元数据（`music-metadata`）
+<p align="center">
+  <a href="./README.md">简体中文</a> |
+  <a href="./README.en.md">English</a>
+</p>
 
-## 技术栈
+## 项目简介
 
-- Node.js
-- Express
-- Axios
-- music-metadata
+PremiumMusic 是一个开源的私有音乐播放器项目，包含：
 
-## 快速开始
+- Web 服务端与前端（`src/` + `public/`）
+- Desktop 客户端源码（`app/macos/`，仅源码，不包含 `node_modules` / `dist`）
 
-### 1. 安装依赖
+## 功能
 
-```bash
-npm install
-```
+- 本地音乐扫描与播放
+- 音频元数据读取（`music-metadata`）
+- 轻量 Web UI
+- Electron 桌面客户端（macOS 源码已开源）
 
-### 2. 启动服务
-
-```bash
-npm run start
-```
-
-或开发模式：
-
-```bash
-npm run dev
-```
-
-默认入口：`src/server.js`
-
-## 项目结构
+## 目录结构
 
 ```text
 .
-├── src/                 # 后端服务
-├── public/              # 前端静态资源
+├── app/
+│   └── macos/            # Electron 客户端源码
+├── public/               # Web 前端静态资源
+├── src/                  # Web 后端服务
 ├── Dockerfile
 ├── nginx-example.conf
 └── package.json
 ```
 
-## English
+## 本地运行（Web）
 
-For the English version, see [README.en.md](./README.en.md).
+```bash
+npm install
+npm run start
+```
+
+开发模式：
+
+```bash
+npm run dev
+```
+
+## 本地运行（Desktop / macOS 源码）
+
+```bash
+cd app/macos
+npm install
+npm run dev
+```
+
+## 自动编译与发版（GitHub Actions）
+
+项目已配置自动 Release 工作流：
+
+- 触发条件：推送 tag（格式 `v*`，如 `v1.0.0`）
+- 构建目标：macOS（`dmg`）+ Windows（`portable exe`）
+- 产物位置：GitHub Release Assets
+
+创建发布示例：
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```

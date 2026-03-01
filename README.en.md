@@ -1,54 +1,75 @@
-# PremiumMusic - Private NetEase Cloud Music Player
+<p align="center">
+  <img src="./public/images/logo.png" alt="PremiumMusic Logo" width="140" />
+</p>
 
-A private music player service built with Node.js + Express, designed to provide a NetEase Cloud Music-like playback experience in local or private environments.
+<h1 align="center">PremiumMusic</h1>
+
+<p align="center">Private NetEase Cloud Music Player</p>
+
+<p align="center">
+  <a href="./README.md">简体中文</a> |
+  <a href="./README.en.md">English</a>
+</p>
+
+## Overview
+
+PremiumMusic is an open-source private music player project with:
+
+- Web backend + frontend (`src/` + `public/`)
+- Desktop client source (`app/macos/`, source only; no `node_modules` or `dist`)
 
 ## Features
 
-- Local music library management and playback
-- Web frontend interface
-- Backend API service (Express)
+- Local music scanning and playback
 - Audio metadata parsing via `music-metadata`
-
-## Tech Stack
-
-- Node.js
-- Express
-- Axios
-- music-metadata
-
-## Quick Start
-
-### 1. Install dependencies
-
-```bash
-npm install
-```
-
-### 2. Start server
-
-```bash
-npm run start
-```
-
-Or for development:
-
-```bash
-npm run dev
-```
-
-Default entry point: `src/server.js`
+- Lightweight Web UI
+- Electron desktop client (macOS source is open)
 
 ## Project Structure
 
 ```text
 .
-├── src/                 # Backend service
-├── public/              # Frontend static assets
+├── app/
+│   └── macos/            # Electron desktop source
+├── public/               # Web frontend static assets
+├── src/                  # Web backend service
 ├── Dockerfile
 ├── nginx-example.conf
 └── package.json
 ```
 
-## 中文
+## Run Locally (Web)
 
-Chinese documentation is available at [README.md](./README.md).
+```bash
+npm install
+npm run start
+```
+
+Development mode:
+
+```bash
+npm run dev
+```
+
+## Run Locally (Desktop / macOS source)
+
+```bash
+cd app/macos
+npm install
+npm run dev
+```
+
+## Auto Build & Release (GitHub Actions)
+
+The repository includes an automatic release workflow:
+
+- Trigger: push a tag matching `v*` (e.g. `v1.0.0`)
+- Targets: macOS (`dmg`) + Windows (`portable exe`)
+- Output: uploaded to GitHub Release assets
+
+Release example:
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
