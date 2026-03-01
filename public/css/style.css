@@ -2039,38 +2039,8 @@ body::before {
   z-index: 3;
 }
 
-.pc-fullscreen-bg-switch {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  z-index: 3;
-  background: rgba(17, 23, 38, 0.65);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  color: #eaf4ff;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.25s ease;
-}
-
-.pc-fullscreen-bg-switch:hover {
-  border-color: rgba(146, 217, 255, 0.6);
-  box-shadow: 0 0 0 3px rgba(109, 190, 255, 0.14);
-  transform: translateY(-1px);
-}
-
 .lyrics-panel-pc-fullscreen:hover .pc-fullscreen-close,
 .lyrics-panel-pc-fullscreen.show-close .pc-fullscreen-close {
-  opacity: 1;
-  visibility: visible;
-}
-
-.lyrics-panel-pc-fullscreen:hover .pc-fullscreen-bg-switch,
-.lyrics-panel-pc-fullscreen.show-close .pc-fullscreen-bg-switch {
   opacity: 1;
   visibility: visible;
 }
