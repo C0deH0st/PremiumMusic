@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Premium Music</title>
   <link rel="icon" type="image/png" href="./images/logo-small.png?v=20260301-8">
-  <link rel="stylesheet" href="./css/style.css?v=20260302-21">
+  <link rel="stylesheet" href="./css/style.css?v=20260302-20">
   <script src="./js/vue.global.js?v=3.5.29"></script>
 </head>
 <body>
-  <div class="app" id="app" :class="[`bg-${currentBackground}`, { 'pc-fullscreen-active': isPCFullscreen }]">
+  <div class="app" id="app" :class="`bg-${currentBackground}`">
     <button class="header-playlist-toggle" @click="togglePlaylist" :title="isPlaylistVisible ? '隐藏播放列表' : '显示播放列表'" :class="{ 'visible': !isPlaylistVisible }">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M9 18l6-6-6-6"></path>
