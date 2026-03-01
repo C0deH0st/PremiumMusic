@@ -12,8 +12,13 @@ function getSkyConfig() {
     : { staticStars: 230, shootingStars: 5 };
 }
 
-function normalizeBackgroundMode(mode) {
-  return BACKGROUND_MODES.includes(mode) ? mode : 'effect2';
+function normalizeBackgroundMode(mode, fallback = 'effect2') {
+  return BACKGROUND_MODES.includes(mode) ? mode : fallback;
+}
+
+function isMacElectron() {
+  const ua = navigator.userAgent || '';
+  return /Macintosh|Mac OS X/i.test(ua) && /Electron/i.test(ua);
 }
 
 function createStaticStars(starrySkyEl, count) {
@@ -144,10 +149,6 @@ const BACKGROUND_SHADER_FRAGMENTS = {
 };
 
 function createBackgroundShaderController(canvas, appRootEl) {
-  const ua = navigator.userAgent || '';
-  const isMacElectron = /Macintosh|Mac OS X/i.test(ua) && /Electron/i.test(ua);
-  if (isMacElectron) return null;
-
   const gl = canvas.getContext('webgl', { alpha: false, antialias: true });
   if (!gl) return null;
 
@@ -535,7 +536,10 @@ createApp({
     const isPC = computed(() => window.innerWidth > MOBILE_BREAKPOINT);
     const isPCFullscreen = ref(false);
     const pcFullscreenShowClose = ref(false);
-    const currentBackground = ref(normalizeBackgroundMode(localStorage.getItem(BACKGROUND_MODE_KEY)));
+    const defaultBackgroundMode = isMacElectron() ? 'starry' : 'effect2';
+    const currentBackground = ref(
+      normalizeBackgroundMode(localStorage.getItem(BACKGROUND_MODE_KEY), defaultBackgroundMode)
+    );
 
     const starrySkyRef = ref(null);
     const shaderCanvasRef = ref(null);
