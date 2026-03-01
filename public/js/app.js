@@ -16,9 +16,9 @@ function normalizeBackgroundMode(mode, fallback = 'effect2') {
   return BACKGROUND_MODES.includes(mode) ? mode : fallback;
 }
 
-function isMacElectron() {
+function isDesktopElectron() {
   const ua = navigator.userAgent || '';
-  return /Macintosh|Mac OS X/i.test(ua) && /Electron/i.test(ua);
+  return /Electron/i.test(ua);
 }
 
 function createStaticStars(starrySkyEl, count) {
@@ -230,18 +230,22 @@ function createBackgroundShaderController(canvas, appRootEl) {
   }
 
   function resize() {
+    const rect = canvas.getBoundingClientRect();
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const width = Math.max(1, Math.floor(window.innerWidth * dpr));
-    const height = Math.max(1, Math.floor(window.innerHeight * dpr));
-    if (canvas.width !== width || canvas.height !== height) {
+    const width = Math.max(1, Math.floor(rect.width * dpr));
+    const height = Math.max(1, Math.floor(rect.height * dpr));
+    const changed = canvas.width !== width || canvas.height !== height;
+    if (changed) {
       canvas.width = width;
       canvas.height = height;
     }
     gl.viewport(0, 0, canvas.width, canvas.height);
+    return changed;
   }
 
   function draw(now) {
     if (!currentProgram || !currentMode) return;
+    resize();
 
     const uniforms = uniformCache.get(currentMode);
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -536,7 +540,7 @@ createApp({
     const isPC = computed(() => window.innerWidth > MOBILE_BREAKPOINT);
     const isPCFullscreen = ref(false);
     const pcFullscreenShowClose = ref(false);
-    const defaultBackgroundMode = isMacElectron() ? 'starry' : 'effect2';
+    const defaultBackgroundMode = isDesktopElectron() ? 'starry' : 'effect2';
     const currentBackground = ref(
       normalizeBackgroundMode(localStorage.getItem(BACKGROUND_MODE_KEY), defaultBackgroundMode)
     );
@@ -1175,7 +1179,10 @@ createApp({
     }
 
     function onVisibilityChange() {
-      if (!document.hidden) ensureStarrySky();
+      if (!document.hidden) {
+        ensureStarrySky();
+        backgroundShaderController?.resize();
+      }
     }
 
     audioPlayer.addEventListener('timeupdate', () => {
