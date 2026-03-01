@@ -1924,6 +1924,11 @@ body::before {
 
 /* PC全屏歌词使用移动端9行固定样式 */
 .lyrics-panel-pc-fullscreen .pc-fullscreen-lyrics-content.mobile-fixed {
+  --pc-lyric-line-height: 36px;
+  --pc-lyric-line-count: 9;
+  height: calc(var(--pc-lyric-line-height) * var(--pc-lyric-line-count));
+  min-height: calc(var(--pc-lyric-line-height) * var(--pc-lyric-line-count));
+  max-height: calc(var(--pc-lyric-line-height) * var(--pc-lyric-line-count));
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -1933,8 +1938,8 @@ body::before {
 .lyrics-panel-pc-fullscreen .pc-fullscreen-lyrics-content.mobile-fixed .lyrics-line {
   margin: 0;
   padding: 0;
-  min-height: 36px;
-  line-height: 36px;
+  min-height: var(--pc-lyric-line-height);
+  line-height: var(--pc-lyric-line-height);
   font-size: 15px;
   transform: none;
   border-radius: 0;
@@ -1948,6 +1953,22 @@ body::before {
   text-shadow: 0 0 20px rgba(233, 69, 96, 0.5);
   transform: none;
   opacity: 1;
+}
+
+@media (max-height: 920px) {
+  .lyrics-panel-pc-fullscreen .pc-fullscreen-lyrics-content.mobile-fixed {
+    --pc-lyric-line-height: 34px;
+  }
+}
+
+@media (max-height: 820px) {
+  .lyrics-panel-pc-fullscreen .pc-fullscreen-lyrics-content.mobile-fixed {
+    --pc-lyric-line-height: 30px;
+  }
+
+  .lyrics-panel-pc-fullscreen .pc-fullscreen-lyrics-content.mobile-fixed .lyrics-line.active {
+    font-size: 18px;
+  }
 }
 
 @keyframes pcLyricShift {

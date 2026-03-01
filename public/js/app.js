@@ -16,11 +16,6 @@ function normalizeBackgroundMode(mode, fallback = 'effect2') {
   return BACKGROUND_MODES.includes(mode) ? mode : fallback;
 }
 
-function isDesktopElectron() {
-  const ua = navigator.userAgent || '';
-  return /Electron/i.test(ua);
-}
-
 function createStaticStars(starrySkyEl, count) {
   const starColors = ['#ffffff', '#f8fbff', '#dce9ff', '#b9d1ff', '#fff2cc', '#ffe0a8', '#c6f2ff'];
 
@@ -540,7 +535,7 @@ createApp({
     const isPC = computed(() => window.innerWidth > MOBILE_BREAKPOINT);
     const isPCFullscreen = ref(false);
     const pcFullscreenShowClose = ref(false);
-    const defaultBackgroundMode = isDesktopElectron() ? 'starry' : 'effect2';
+    const defaultBackgroundMode = 'effect2';
     const currentBackground = ref(
       normalizeBackgroundMode(localStorage.getItem(BACKGROUND_MODE_KEY), defaultBackgroundMode)
     );
