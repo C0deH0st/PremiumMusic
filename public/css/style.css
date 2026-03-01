@@ -32,6 +32,59 @@
   left: 0;
   width: 100%;
   height: 100%;
+  transition: opacity 0.4s ease;
+}
+
+.starry-sky::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transition: opacity 0.4s ease;
+}
+
+.app.bg-effect2 .starry-sky::before {
+  background:
+    radial-gradient(ellipse 86% 62% at 16% 24%, rgba(35, 108, 246, 0.33) 0%, transparent 56%),
+    radial-gradient(ellipse 70% 46% at 86% 18%, rgba(64, 229, 255, 0.24) 0%, transparent 58%),
+    radial-gradient(ellipse 76% 58% at 62% 78%, rgba(118, 56, 255, 0.26) 0%, transparent 62%),
+    conic-gradient(from 15deg at 35% 45%, rgba(0, 0, 0, 0.15), rgba(84, 210, 255, 0.22), rgba(76, 91, 255, 0.2), rgba(0, 0, 0, 0.18));
+  filter: saturate(1.2) blur(0.2px);
+  animation: shaderFlowTwo 18s ease-in-out infinite alternate;
+}
+
+.app.bg-effect2 .starry-sky::after {
+  background:
+    radial-gradient(circle at 70% 20%, rgba(255, 255, 255, 0.18) 0%, transparent 26%),
+    radial-gradient(circle at 18% 70%, rgba(173, 232, 255, 0.16) 0%, transparent 24%),
+    repeating-linear-gradient(125deg, rgba(255, 255, 255, 0.03) 0 1px, transparent 1px 13px);
+  mix-blend-mode: screen;
+  opacity: 0.62;
+  animation: shaderGrainMove 10s linear infinite;
+}
+
+.app.bg-effect5 .starry-sky::before {
+  background:
+    radial-gradient(circle at 48% 52%, rgba(255, 116, 75, 0.17) 0%, transparent 34%),
+    radial-gradient(circle at 52% 48%, rgba(255, 203, 107, 0.18) 0%, transparent 42%),
+    repeating-conic-gradient(
+      from 0deg at 50% 50%,
+      rgba(255, 198, 128, 0.09) 0deg 6deg,
+      rgba(22, 10, 22, 0) 6deg 16deg
+    ),
+    radial-gradient(ellipse at 50% 120%, rgba(12, 6, 24, 0.92) 0%, rgba(8, 6, 18, 1) 56%);
+  animation: shaderFlowFive 16s ease-in-out infinite alternate;
+}
+
+.app.bg-effect5 .starry-sky::after {
+  background:
+    radial-gradient(circle at 50% 40%, rgba(255, 222, 168, 0.14) 0%, transparent 35%),
+    repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0 1px, transparent 1px 4px);
+  mix-blend-mode: screen;
+  opacity: 0.58;
+  animation: shaderPulseFive 8s ease-in-out infinite;
+}
+
+.app.bg-starry .starry-sky::before {
   background: 
     radial-gradient(ellipse 92% 58% at 14% 20%, rgba(53, 108, 196, 0.2) 0%, transparent 58%),
     radial-gradient(ellipse 66% 44% at 82% 62%, rgba(18, 156, 209, 0.18) 0%, transparent 55%),
@@ -39,10 +92,7 @@
   animation: nebulaShift 24s ease-in-out infinite alternate;
 }
 
-.starry-sky::after {
-  content: '';
-  position: absolute;
-  inset: 0;
+.app.bg-starry .starry-sky::after {
   background:
     radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.06) 0%, transparent 42%),
     radial-gradient(circle at 50% 120%, rgba(0, 0, 0, 0.34) 0%, rgba(0, 0, 0, 0.7) 58%),
@@ -54,6 +104,31 @@
 @keyframes nebulaShift {
   0% { opacity: 0.86; transform: scale(1) translate3d(0, 0, 0); }
   100% { opacity: 1; transform: scale(1.08) translate3d(-1.5%, 1%, 0); }
+}
+
+@keyframes shaderFlowTwo {
+  0% { transform: translate3d(0, 0, 0) scale(1); filter: hue-rotate(0deg) saturate(1.15); }
+  100% { transform: translate3d(-2.2%, 1.6%, 0) scale(1.07); filter: hue-rotate(22deg) saturate(1.32); }
+}
+
+@keyframes shaderGrainMove {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(12px, -8px, 0); }
+}
+
+@keyframes shaderFlowFive {
+  0% { transform: scale(1) rotate(0deg); filter: hue-rotate(0deg) saturate(1); }
+  100% { transform: scale(1.08) rotate(3deg); filter: hue-rotate(-8deg) saturate(1.15); }
+}
+
+@keyframes shaderPulseFive {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 0.7; }
+}
+
+.app:not(.bg-starry) .star,
+.app:not(.bg-starry) .shooting-star {
+  display: none;
 }
 
 .star {
@@ -326,6 +401,31 @@ body::before {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.background-switch-btn {
+  margin-left: 10px;
+  height: 36px;
+  padding: 0 12px;
+  max-width: 120px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(17, 23, 38, 0.65);
+  color: #eaf4ff;
+  font-size: 12px;
+  letter-spacing: 0.2px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  flex-shrink: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.background-switch-btn:hover {
+  border-color: rgba(146, 217, 255, 0.6);
+  box-shadow: 0 0 0 3px rgba(109, 190, 255, 0.14);
+  transform: translateY(-1px);
 }
 
 .search-box {
@@ -1525,6 +1625,14 @@ body::before {
   
   .mobile-search-btn:hover {
     background: var(--bg-tertiary);
+  }
+
+  .background-switch-btn {
+    margin-left: 6px;
+    max-width: 74px;
+    height: 34px;
+    padding: 0 10px;
+    font-size: 11px;
   }
   
   .player-bar {

@@ -1,5 +1,7 @@
 const API_BASE = '/music';
 const MOBILE_BREAKPOINT = 700;
+const BACKGROUND_MODE_KEY = 'backgroundMode';
+const BACKGROUND_MODES = ['effect2', 'effect5', 'starry'];
 const { createApp, ref, computed, onMounted, onBeforeUnmount, watch, nextTick } = Vue;
 
 function prefersReducedMotion() {
@@ -17,6 +19,10 @@ function getSkyConfig() {
   return isMobile
     ? { staticStars: 150, shootingStars: 2 }
     : { staticStars: 230, shootingStars: 5 };
+}
+
+function normalizeBackgroundMode(mode) {
+  return BACKGROUND_MODES.includes(mode) ? mode : 'effect2';
 }
 
 function createStaticStars(starrySkyEl, count) {
@@ -296,6 +302,7 @@ createApp({
     const isPC = computed(() => window.innerWidth > MOBILE_BREAKPOINT);
     const isPCFullscreen = ref(false);
     const pcFullscreenShowClose = ref(false);
+    const currentBackground = ref(normalizeBackgroundMode(localStorage.getItem(BACKGROUND_MODE_KEY)));
 
     const starrySkyRef = ref(null);
     const searchInputRef = ref(null);
@@ -306,6 +313,16 @@ createApp({
     const fullscreenTitleRef = ref(null);
     const fullscreenTitleTextRef = ref(null);
     const tonearmAnimation = ref('none');
+    const currentBackgroundLabel = computed(() => {
+      switch (currentBackground.value) {
+        case 'effect5':
+          return '效果5';
+        case 'starry':
+          return '星空';
+        default:
+          return '效果2';
+      }
+    });
 
     // 唱针动画控制
     function triggerTonearmEntry() {
@@ -466,6 +483,12 @@ createApp({
       const starrySkyEl = starrySkyRef.value;
       if (!starrySkyEl) return;
 
+      if (currentBackground.value !== 'starry') {
+        starrySkyEl.innerHTML = '';
+        starrySkyEl.dataset.expectedCount = '0';
+        return;
+      }
+
       const config = getSkyConfig();
       starrySkyEl.innerHTML = '';
       starrySkyEl.dataset.expectedCount = String(config.staticStars + config.shootingStars);
@@ -477,6 +500,14 @@ createApp({
       const starrySkyEl = starrySkyRef.value;
       if (!starrySkyEl) return;
 
+      if (currentBackground.value !== 'starry') {
+        if (starrySkyEl.children.length > 0) {
+          starrySkyEl.innerHTML = '';
+        }
+        starrySkyEl.dataset.expectedCount = '0';
+        return;
+      }
+
       const config = getSkyConfig();
       const expectedCount = config.staticStars + config.shootingStars;
       const cachedExpected = Number(starrySkyEl.dataset.expectedCount || 0);
@@ -484,6 +515,13 @@ createApp({
       if (starrySkyEl.children.length !== expectedCount || cachedExpected !== expectedCount) {
         renderStarrySky();
       }
+    }
+
+    function cycleBackground() {
+      const currentIndex = BACKGROUND_MODES.indexOf(currentBackground.value);
+      const nextIndex = (currentIndex + 1) % BACKGROUND_MODES.length;
+      currentBackground.value = BACKGROUND_MODES[nextIndex];
+      ensureStarrySky();
     }
 
     function updateFullscreenTitleOverflow() {
@@ -949,8 +987,13 @@ createApp({
       }
     });
 
+    watch(currentBackground, (mode) => {
+      localStorage.setItem(BACKGROUND_MODE_KEY, mode);
+      ensureStarrySky();
+    });
+
     onMounted(async () => {
-      renderStarrySky();
+      ensureStarrySky();
       await loadSongs();
 
       const savedVolume = localStorage.getItem('volume');
@@ -1050,6 +1093,8 @@ createApp({
       isPC,
       isPCFullscreen,
       pcFullscreenShowClose,
+      currentBackground,
+      currentBackgroundLabel,
       starrySkyRef,
       searchInputRef,
       progressBarRef,
@@ -1083,6 +1128,7 @@ createApp({
       handleMobilePlayerBarClick,
       togglePCFullscreen,
       closePCFullscreen,
+      cycleBackground,
       handlePCFullscreenMouseMove
     };
   }
