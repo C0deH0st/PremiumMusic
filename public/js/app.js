@@ -144,6 +144,10 @@ const BACKGROUND_SHADER_FRAGMENTS = {
 };
 
 function createBackgroundShaderController(canvas, appRootEl) {
+  const ua = navigator.userAgent || '';
+  const isMacElectron = /Macintosh|Mac OS X/i.test(ua) && /Electron/i.test(ua);
+  if (isMacElectron) return null;
+
   const gl = canvas.getContext('webgl', { alpha: false, antialias: true });
   if (!gl) return null;
 
