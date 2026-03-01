@@ -2079,6 +2079,22 @@ body::before {
   background: rgba(255, 255, 255, 0.1);
 }
 
+.app.pc-fullscreen-active .header,
+.app.pc-fullscreen-active .main-content,
+.app.pc-fullscreen-active .player-bar,
+.app.pc-fullscreen-active .fullscreen-lyrics {
+  display: none !important;
+}
+
+.app.pc-fullscreen-active .lyrics-panel-pc-fullscreen {
+  background: transparent;
+}
+
+.app.pc-fullscreen-active .lyrics-panel-pc-fullscreen::before,
+.app.pc-fullscreen-active .lyrics-panel-pc-fullscreen::after {
+  content: none;
+}
+
 /* 播放器栏全屏歌词按钮 */
 .lyrics-fullscreen-btn {
   display: flex !important;
