@@ -39,6 +39,7 @@ PremiumMusic 是一个开源的私有音乐播放器项目，包含：
 
 ```text
 .
+├── music/               # 本地音乐目录（放歌曲文件）
 ├── windows_macos_app/    # Electron 客户端源码
 ├── public/               # Web 前端静态资源
 ├── src/                  # Web 后端服务

@@ -39,6 +39,7 @@ PremiumMusic is an open-source private music player project with:
 
 ```text
 .
+├── music/               # Local music directory (put audio files here)
 ├── windows_macos_app/    # Electron desktop source
 ├── public/               # Web frontend static assets
 ├── src/                  # Web backend service
