@@ -643,7 +643,7 @@ body::before {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 130px 20px 24px;
+  padding: clamp(28px, 6vh, 72px) 20px 16px;
   max-height: 520px;
   position: relative;
 }
@@ -935,7 +935,7 @@ body::before {
 }
 
 .vinyl-lyrics {
-  padding: 77px 0px 0px;
+  padding: clamp(12px, 2.8vh, 36px) 0 0;
   text-align: center;
 }
 
@@ -978,14 +978,13 @@ body::before {
   backdrop-filter: blur(10px);
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
   border-left: 1px solid var(--border-color);
   min-width: 280px;
   min-height: 0;
   overflow-y: auto;
   position: relative;
-  padding-top: 20px;
-  padding-bottom: 20px;
+  padding: 18px 0 20px;
 }
 
 /* 歌词面板中的全屏按钮 */
@@ -1818,7 +1817,7 @@ body::before {
 
 @media (min-width: 701px) and (max-height: 920px) {
   .lyrics-vinyl {
-    padding: 72px 16px 16px;
+    padding: 20px 16px 10px;
     max-height: 380px;
   }
 
@@ -1842,7 +1841,7 @@ body::before {
   }
 
   .vinyl-lyrics {
-    padding-top: 24px;
+    padding-top: 10px;
   }
 
   .vinyl-lyrics-container {
