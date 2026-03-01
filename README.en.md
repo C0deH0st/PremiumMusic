@@ -5,6 +5,8 @@
 <h1 align="center">PremiumMusic</h1>
 
 <p align="center">Private NetEase Cloud Music Player</p>
+<p align="center">Repository intro: an open-source project for private local music management and playback (Web + Desktop).</p>
+<p align="center"><strong>Built with OpenAI Codex GPT-5.3 vibe coding</strong></p>
 
 <p align="center">
   <a href="./README.md">简体中文</a> |

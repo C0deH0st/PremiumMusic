@@ -5,6 +5,8 @@
 <h1 align="center">PremiumMusic</h1>
 
 <p align="center">私有网易云音乐播放器</p>
+<p align="center">仓库简介：一个用于本地私有音乐管理与播放的开源项目（Web + Desktop）。</p>
+<p align="center"><strong>Built with OpenAI Codex GPT-5.3 vibe coding</strong></p>
 
 <p align="center">
   <a href="./README.md">简体中文</a> |
