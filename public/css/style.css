@@ -33,6 +33,7 @@
   width: 100%;
   height: 100%;
   transition: opacity 0.4s ease;
+  z-index: 1;
 }
 
 .starry-sky::after {
@@ -40,6 +41,29 @@
   position: absolute;
   inset: 0;
   transition: opacity 0.4s ease;
+  z-index: 1;
+}
+
+.shader-bg-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  z-index: 0;
+}
+
+.shader-bg-canvas.active {
+  display: block;
+  opacity: 1;
+}
+
+.app.webgl-bg-ready.bg-effect2 .starry-sky::before,
+.app.webgl-bg-ready.bg-effect2 .starry-sky::after {
+  opacity: 0;
 }
 
 .app.bg-effect2 .starry-sky::before {
@@ -62,29 +86,7 @@
   animation: shaderGrainMove 10s linear infinite;
 }
 
-.app.bg-effect5 .starry-sky::before {
-  background:
-    radial-gradient(circle at 48% 52%, rgba(255, 116, 75, 0.17) 0%, transparent 34%),
-    radial-gradient(circle at 52% 48%, rgba(255, 203, 107, 0.18) 0%, transparent 42%),
-    repeating-conic-gradient(
-      from 0deg at 50% 50%,
-      rgba(255, 198, 128, 0.09) 0deg 6deg,
-      rgba(22, 10, 22, 0) 6deg 16deg
-    ),
-    radial-gradient(ellipse at 50% 120%, rgba(12, 6, 24, 0.92) 0%, rgba(8, 6, 18, 1) 56%);
-  animation: shaderFlowFive 16s ease-in-out infinite alternate;
-}
-
-.app.bg-effect5 .starry-sky::after {
-  background:
-    radial-gradient(circle at 50% 40%, rgba(255, 222, 168, 0.14) 0%, transparent 35%),
-    repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0 1px, transparent 1px 4px);
-  mix-blend-mode: screen;
-  opacity: 0.58;
-  animation: shaderPulseFive 8s ease-in-out infinite;
-}
-
-.app.bg-starry .starry-sky::before {
+.starry-sky::before {
   background: 
     radial-gradient(ellipse 92% 58% at 14% 20%, rgba(53, 108, 196, 0.2) 0%, transparent 58%),
     radial-gradient(ellipse 66% 44% at 82% 62%, rgba(18, 156, 209, 0.18) 0%, transparent 55%),
@@ -92,7 +94,7 @@
   animation: nebulaShift 24s ease-in-out infinite alternate;
 }
 
-.app.bg-starry .starry-sky::after {
+.starry-sky::after {
   background:
     radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.06) 0%, transparent 42%),
     radial-gradient(circle at 50% 120%, rgba(0, 0, 0, 0.34) 0%, rgba(0, 0, 0, 0.7) 58%),
@@ -116,28 +118,9 @@
   100% { transform: translate3d(12px, -8px, 0); }
 }
 
-@keyframes shaderFlowFive {
-  0% { transform: scale(1) rotate(0deg); filter: hue-rotate(0deg) saturate(1); }
-  100% { transform: scale(1.08) rotate(3deg); filter: hue-rotate(-8deg) saturate(1.15); }
-}
-
-@keyframes shaderPulseFive {
-  0%, 100% { opacity: 0.45; }
-  50% { opacity: 0.7; }
-}
-
-.app:not(.bg-starry) .star,
-.app:not(.bg-starry) .shooting-star {
-  display: none;
-}
-
-.app.bg-starry .star,
-.app.bg-starry .shooting-star {
-  display: block;
-}
-
 .star {
   position: absolute;
+  z-index: 2;
   border-radius: 50%;
   animation: twinkle var(--duration) ease-in-out infinite;
   opacity: var(--opacity);
@@ -198,6 +181,7 @@
 
 .shooting-star {
   position: absolute;
+  z-index: 2;
   width: 95px;
   height: 2px;
   background: linear-gradient(90deg, rgba(255, 255, 255, 0.95) 0%, rgba(180, 222, 255, 0.9) 46%, rgba(180, 222, 255, 0.45) 70%, rgba(255, 255, 255, 0) 100%);

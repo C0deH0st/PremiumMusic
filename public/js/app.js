@@ -1,20 +1,11 @@
 const API_BASE = '/music';
 const MOBILE_BREAKPOINT = 700;
 const BACKGROUND_MODE_KEY = 'backgroundMode';
-const BACKGROUND_MODES = ['effect2', 'effect5', 'starry'];
+const BACKGROUND_MODES = ['effect2', 'starry'];
 const { createApp, ref, computed, onMounted, onBeforeUnmount, watch, nextTick } = Vue;
-
-function prefersReducedMotion() {
-  return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
-}
 
 function getSkyConfig() {
   const isMobile = window.innerWidth <= MOBILE_BREAKPOINT;
-  const reduceMotion = prefersReducedMotion();
-
-  if (reduceMotion) {
-    return { staticStars: 88, shootingStars: 0 };
-  }
 
   return isMobile
     ? { staticStars: 150, shootingStars: 2 }
@@ -82,6 +73,244 @@ function createShootingStars(starrySkyEl, count) {
     shootingStar.style.animation = `shoot ${duration}s linear ${delay}s infinite`;
     starrySkyEl.appendChild(shootingStar);
   }
+}
+
+function clearStarNodes(starrySkyEl) {
+  starrySkyEl.querySelectorAll('.star, .shooting-star').forEach((node) => node.remove());
+}
+
+function countStarNodes(starrySkyEl) {
+  return starrySkyEl.querySelectorAll('.star, .shooting-star').length;
+}
+
+const BACKGROUND_SHADER_VERTEX = `
+attribute vec4 aVertexPosition;
+attribute vec2 aTextureCoord;
+varying vec2 vTextureCoord;
+void main() {
+  gl_Position = aVertexPosition;
+  vTextureCoord = aTextureCoord;
+}
+`;
+
+const EFFECT2_ETHER_FRAGMENT = `
+precision mediump float;
+uniform vec2 iResolution;
+uniform float iTime;
+uniform vec2 iMouse;
+varying vec2 vTextureCoord;
+
+mat2 rot(float a) {
+  float c = cos(a);
+  float s = sin(a);
+  return mat2(c, -s, s, c);
+}
+
+float mapField(vec3 p) {
+  p.xz *= rot(iTime * 0.42);
+  p.xy *= rot(iTime * 0.31);
+  vec3 q = p * 2.0 + iTime;
+  return length(p + vec3(sin(iTime * 0.7))) * log(length(p) + 1.0) +
+    sin(q.x + sin(q.z + sin(q.y))) * 0.5 - 1.0;
+}
+
+void main() {
+  vec2 fragCoord = vTextureCoord * iResolution;
+  vec2 p = (2.0 * fragCoord - iResolution.xy) / min(iResolution.x, iResolution.y);
+
+  vec3 cl = vec3(0.0);
+  float d = 2.45;
+
+  for (int i = 0; i <= 5; i++) {
+    vec3 p3d = vec3(0.0, 0.0, 5.0) + normalize(vec3(p, -1.0)) * d;
+    float rz = mapField(p3d);
+    float f = clamp((rz - mapField(p3d + 0.1)) * 0.5, -0.1, 1.0);
+    vec3 baseColor = vec3(0.1, 0.3, 0.4) + vec3(5.0, 2.5, 3.0) * f;
+    cl = cl * baseColor + smoothstep(2.5, 0.0, rz) * 0.7 * baseColor;
+    d += min(rz, 1.0);
+  }
+
+  vec2 m = iMouse * 2.0 - 1.0;
+  float mouseDist = length(p - m * 0.35);
+  float mouseGlow = smoothstep(0.65, 0.0, mouseDist);
+  cl += vec3(0.5, 0.3, 0.7) * mouseGlow * 0.26;
+
+  gl_FragColor = vec4(cl, 1.0);
+}
+`;
+
+const BACKGROUND_SHADER_FRAGMENTS = {
+  effect2: EFFECT2_ETHER_FRAGMENT
+};
+
+function createBackgroundShaderController(canvas, appRootEl) {
+  const gl = canvas.getContext('webgl', { alpha: false, antialias: true });
+  if (!gl) return null;
+
+  const programCache = new Map();
+  const uniformCache = new Map();
+  let currentProgram = null;
+  let currentMode = null;
+  let animationFrame = 0;
+  let startTime = 0;
+  const mouse = { x: 0.5, y: 0.5 };
+
+  const positionBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+    -1.0, -1.0,
+    1.0, -1.0,
+    1.0, 1.0,
+    -1.0, 1.0
+  ]), gl.STATIC_DRAW);
+
+  const textureBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, textureBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+    0.0, 0.0,
+    1.0, 0.0,
+    1.0, 1.0,
+    0.0, 1.0
+  ]), gl.STATIC_DRAW);
+
+  const indexBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array([0, 1, 2, 0, 2, 3]), gl.STATIC_DRAW);
+
+  function compileShader(type, source) {
+    const shader = gl.createShader(type);
+    if (!shader) return null;
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      console.error(gl.getShaderInfoLog(shader));
+      gl.deleteShader(shader);
+      return null;
+    }
+    return shader;
+  }
+
+  function getProgram(mode) {
+    if (programCache.has(mode)) return programCache.get(mode);
+    const fragmentSource = BACKGROUND_SHADER_FRAGMENTS[mode];
+    if (!fragmentSource) return null;
+
+    const vertexShader = compileShader(gl.VERTEX_SHADER, BACKGROUND_SHADER_VERTEX);
+    const fragmentShader = compileShader(gl.FRAGMENT_SHADER, fragmentSource);
+    if (!vertexShader || !fragmentShader) return null;
+
+    const program = gl.createProgram();
+    if (!program) return null;
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
+    gl.deleteShader(vertexShader);
+    gl.deleteShader(fragmentShader);
+
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      console.error(gl.getProgramInfoLog(program));
+      gl.deleteProgram(program);
+      return null;
+    }
+
+    programCache.set(mode, program);
+    uniformCache.set(mode, {
+      iResolution: gl.getUniformLocation(program, 'iResolution'),
+      iTime: gl.getUniformLocation(program, 'iTime'),
+      iMouse: gl.getUniformLocation(program, 'iMouse'),
+      aVertexPosition: gl.getAttribLocation(program, 'aVertexPosition'),
+      aTextureCoord: gl.getAttribLocation(program, 'aTextureCoord')
+    });
+    return program;
+  }
+
+  function resize() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const width = Math.max(1, Math.floor(window.innerWidth * dpr));
+    const height = Math.max(1, Math.floor(window.innerHeight * dpr));
+    if (canvas.width !== width || canvas.height !== height) {
+      canvas.width = width;
+      canvas.height = height;
+    }
+    gl.viewport(0, 0, canvas.width, canvas.height);
+  }
+
+  function draw(now) {
+    if (!currentProgram || !currentMode) return;
+
+    const uniforms = uniformCache.get(currentMode);
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.useProgram(currentProgram);
+
+    gl.uniform2f(uniforms.iResolution, canvas.width, canvas.height);
+    gl.uniform1f(uniforms.iTime, (now - startTime) / 1000);
+    gl.uniform2f(uniforms.iMouse, mouse.x, mouse.y);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    gl.vertexAttribPointer(uniforms.aVertexPosition, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(uniforms.aVertexPosition);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, textureBuffer);
+    gl.vertexAttribPointer(uniforms.aTextureCoord, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(uniforms.aTextureCoord);
+
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+    gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
+  }
+
+  function tick(now) {
+    draw(now);
+    animationFrame = requestAnimationFrame(tick);
+  }
+
+  function onMouseMove(event) {
+    mouse.x = Math.max(0, Math.min(1, event.clientX / window.innerWidth));
+    mouse.y = Math.max(0, Math.min(1, 1 - event.clientY / window.innerHeight));
+  }
+
+  window.addEventListener('mousemove', onMouseMove, { passive: true });
+  resize();
+  appRootEl?.classList.add('webgl-bg-ready');
+
+  return {
+    setMode(mode) {
+      if (!BACKGROUND_SHADER_FRAGMENTS[mode]) {
+        if (animationFrame) {
+          cancelAnimationFrame(animationFrame);
+          animationFrame = 0;
+        }
+        canvas.classList.remove('active');
+        currentMode = null;
+        currentProgram = null;
+        return;
+      }
+
+      const nextProgram = getProgram(mode);
+      if (!nextProgram) return;
+      currentMode = mode;
+      currentProgram = nextProgram;
+      resize();
+      canvas.classList.add('active');
+
+      if (!animationFrame) {
+        startTime = performance.now();
+        animationFrame = requestAnimationFrame(tick);
+      }
+    },
+    resize,
+    destroy() {
+      if (animationFrame) {
+        cancelAnimationFrame(animationFrame);
+      }
+      window.removeEventListener('mousemove', onMouseMove);
+      appRootEl?.classList.remove('webgl-bg-ready');
+      programCache.forEach((program) => gl.deleteProgram(program));
+      gl.deleteBuffer(positionBuffer);
+      gl.deleteBuffer(textureBuffer);
+      gl.deleteBuffer(indexBuffer);
+    }
+  };
 }
 
 const PlaylistSidebar = {
@@ -305,6 +534,7 @@ createApp({
     const currentBackground = ref(normalizeBackgroundMode(localStorage.getItem(BACKGROUND_MODE_KEY)));
 
     const starrySkyRef = ref(null);
+    const shaderCanvasRef = ref(null);
     const searchInputRef = ref(null);
     const progressBarRef = ref(null);
     const fullscreenLyricsRef = ref(null);
@@ -315,8 +545,6 @@ createApp({
     const tonearmAnimation = ref('none');
     const currentBackgroundLabel = computed(() => {
       switch (currentBackground.value) {
-        case 'effect5':
-          return '效果5';
         case 'starry':
           return '星空';
         default:
@@ -346,6 +574,7 @@ createApp({
     let resizeTimeout = null;
     let progressDragging = false;
     let removeGlobalListeners = [];
+    let backgroundShaderController = null;
 
     const groupedSongs = computed(() => {
       const groups = {};
@@ -484,13 +713,13 @@ createApp({
       if (!starrySkyEl) return;
 
       if (currentBackground.value !== 'starry') {
-        starrySkyEl.innerHTML = '';
+        clearStarNodes(starrySkyEl);
         starrySkyEl.dataset.expectedCount = '0';
         return;
       }
 
       const config = getSkyConfig();
-      starrySkyEl.innerHTML = '';
+      clearStarNodes(starrySkyEl);
       starrySkyEl.dataset.expectedCount = String(config.staticStars + config.shootingStars);
       createStaticStars(starrySkyEl, config.staticStars);
       createShootingStars(starrySkyEl, config.shootingStars);
@@ -501,8 +730,8 @@ createApp({
       if (!starrySkyEl) return;
 
       if (currentBackground.value !== 'starry') {
-        if (starrySkyEl.children.length > 0) {
-          starrySkyEl.innerHTML = '';
+        if (countStarNodes(starrySkyEl) > 0) {
+          clearStarNodes(starrySkyEl);
         }
         starrySkyEl.dataset.expectedCount = '0';
         return;
@@ -512,9 +741,14 @@ createApp({
       const expectedCount = config.staticStars + config.shootingStars;
       const cachedExpected = Number(starrySkyEl.dataset.expectedCount || 0);
 
-      if (starrySkyEl.children.length !== expectedCount || cachedExpected !== expectedCount) {
+      if (countStarNodes(starrySkyEl) !== expectedCount || cachedExpected !== expectedCount) {
         renderStarrySky();
       }
+    }
+
+    function ensureShaderBackground() {
+      if (!backgroundShaderController || !shaderCanvasRef.value) return;
+      backgroundShaderController.setMode(currentBackground.value);
     }
 
     function cycleBackground() {
@@ -859,6 +1093,7 @@ createApp({
       clearTimeout(resizeTimeout);
       resizeTimeout = setTimeout(() => {
         ensureStarrySky();
+        backgroundShaderController?.resize();
       }, 200);
 
       refreshFullscreenTitleOverflow();
@@ -989,11 +1224,20 @@ createApp({
     watch(currentBackground, (mode) => {
       localStorage.setItem(BACKGROUND_MODE_KEY, mode);
       nextTick(() => {
+        if (mode === 'starry') {
+          renderStarrySky();
+        }
         ensureStarrySky();
+        ensureShaderBackground();
       });
     });
 
     onMounted(async () => {
+      backgroundShaderController = createBackgroundShaderController(
+        shaderCanvasRef.value,
+        document.getElementById('app')
+      );
+      ensureShaderBackground();
       ensureStarrySky();
       await loadSongs();
 
@@ -1062,6 +1306,7 @@ createApp({
       clearTimeout(resizeTimeout);
       titleResizeObserver?.disconnect();
       removeGlobalListeners.forEach((cleanup) => cleanup());
+      backgroundShaderController?.destroy();
     });
 
     return {
@@ -1097,6 +1342,7 @@ createApp({
       currentBackground,
       currentBackgroundLabel,
       starrySkyRef,
+      shaderCanvasRef,
       searchInputRef,
       progressBarRef,
       fullscreenLyricsRef,
