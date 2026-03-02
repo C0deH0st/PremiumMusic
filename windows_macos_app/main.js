@@ -43,27 +43,32 @@ function buildCandidates(rawInput) {
 
 function buildAppMenu() {
   const appVersion = app.getVersion();
+  const isMac = process.platform === 'darwin';
   const template = [
     {
-      label: APP_NAME,
+      label: isMac ? APP_NAME : '帮助',
       submenu: [
         {
           label: `关于 ${APP_NAME}`,
           click: () => app.showAboutPanel()
         },
-        { type: 'separator' },
-        { role: 'hide' },
-        { role: 'hideOthers' },
-        { role: 'unhide' },
-        { type: 'separator' },
-        { role: 'quit' }
+        ...(isMac
+          ? [
+              { type: 'separator' },
+              { role: 'hide' },
+              { role: 'hideOthers' },
+              { role: 'unhide' },
+              { type: 'separator' },
+              { role: 'quit' }
+            ]
+          : [])
       ]
     },
     {
       label: '服务器',
       submenu: [
         {
-          label: '更改连接地址',
+          label: '更换服务器',
           accelerator: 'CmdOrCtrl+L',
           click: () => {
             const win = BrowserWindow.getFocusedWindow() || BrowserWindow.getAllWindows()[0];
@@ -90,7 +95,9 @@ function buildAppMenu() {
     copyright: `Copyright © ${new Date().getFullYear()} ${APP_NAME}`
   });
 
-  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+  const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
+  return menu;
 }
 
 function createMainWindow() {
@@ -103,16 +110,6 @@ function createMainWindow() {
     title: APP_NAME,
     backgroundColor: '#0a0f17',
     icon: path.join(__dirname, 'assets', 'logo.png'),
-    ...(isWindows
-      ? {
-          titleBarStyle: 'hidden',
-          titleBarOverlay: {
-            color: '#0a0f17',
-            symbolColor: '#ecf2ff',
-            height: 36
-          }
-        }
-      : {}),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -120,6 +117,11 @@ function createMainWindow() {
       webviewTag: true
     }
   });
+
+  if (isWindows) {
+    win.setAutoHideMenuBar(false);
+    win.setMenuBarVisibility(true);
+  }
 
   win.loadFile(path.join(__dirname, 'renderer', 'index.html'));
 }

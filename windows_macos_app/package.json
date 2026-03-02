@@ -1,6 +1,6 @@
 {
   "name": "premiummusic-desktop",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Premium Music macOS client",
   "main": "main.js",
   "private": true,
