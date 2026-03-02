@@ -4,7 +4,7 @@
 
 ## 功能
 
-- 输入后端地址后连接到你的 CloudMusic Web 服务
+- 输入后端地址后连接到你的 Web 服务
 - 协议可选：`https` / `http`
 - 输入 `xxx.com` 会自动连接到 `https://xxx.com/music`（或你选择的 `http`）
 - 输入 `xxx.com/music` 会按该路径连接
